@@ -1,5 +1,4 @@
-﻿using Mandoline.CL.Commands;
-using Microsoft.ClearScript;
+﻿using Microsoft.ClearScript;
 using Microsoft.ClearScript.V8;
 using Newtonsoft.Json;
 using System;
@@ -8,10 +7,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Mandoline.CL
+namespace Replify
 {
     public class ClearScriptRepl
     {
