@@ -10,6 +10,22 @@ using System.Reflection;
 
 namespace Replify
 {
+    public interface IThingFactory
+    {
+        object Create(Type type);
+    }
+
+    /// <summary>
+    /// Create command objects using parameterless constructor
+    /// </summary>
+    public class DefaultConstructorThingFactory : IThingFactory
+    {
+        public object Create(Type type)
+        {
+            return Activator.CreateInstance(type);
+        }
+    }
+
     public class ClearScriptRepl
     {
         public const string HistoryFile = "history.txt";
@@ -18,13 +34,19 @@ namespace Replify
         private readonly V8ScriptEngine engine;
 
         public ClearScriptRepl()
+            : this(new DefaultConstructorThingFactory())
         {
-            var commandTypes = from type in Assembly.GetCallingAssembly().GetTypes()
+
+        }
+
+        public ClearScriptRepl(IThingFactory factory)
+        {
+            var commandTypes = from type in Assembly.GetEntryAssembly().GetTypes()
                                where typeof(IReplCommand).IsAssignableFrom(type) && type.IsInterface == false && type.IsAbstract == false
                                select type;
 
             this.commands = from type in commandTypes
-                            select Activator.CreateInstance(type) as IReplCommand;
+                            select factory.Create(type) as IReplCommand;
 
             var runtime = new V8Runtime();
 
@@ -36,6 +58,11 @@ namespace Replify
             }
 
             this.engine = engine;
+        }
+
+        public void AddHostObject(string name, object obj)
+        {
+            this.engine.AddHostObject(name, obj);
         }
 
         public void AddHostType(string name, Type type)
