@@ -16,5 +16,12 @@ namespace Replify.CommandLine.Commands
             
             return results.ToArray();
         }
+
+        public enum TestEnum { Yes, No }
+
+        public TestEnum[] Enums()
+        {
+            return Enum.GetValues(typeof(TestEnum)).Cast<TestEnum>().ToArray();
+        }
     }
 }

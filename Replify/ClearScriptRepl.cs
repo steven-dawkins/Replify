@@ -132,7 +132,11 @@ namespace Replify
                         }
                         else
                         {
-                            var json = JsonConvert.SerializeObject(result, Formatting.Indented);
+                            var settings = new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Include };
+
+                            settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+
+                            var json = JsonConvert.SerializeObject(result, Formatting.Indented, settings);
                             Console.WriteLine(json);
                         }
                         Console.WriteLine("completed in {0}ms", timer.ElapsedMilliseconds);
