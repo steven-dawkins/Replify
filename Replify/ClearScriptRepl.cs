@@ -1,4 +1,5 @@
-﻿using Microsoft.ClearScript;
+﻿using ContinuousDataIntegrityChecking.Commands;
+using Microsoft.ClearScript;
 using Microsoft.ClearScript.V8;
 using Newtonsoft.Json;
 using System;
@@ -41,7 +42,7 @@ namespace Replify
 
         public ClearScriptRepl(IThingFactory factory)
         {
-            var commandTypes = from type in Assembly.GetEntryAssembly().GetTypes()
+            var commandTypes = from type in Assembly.GetEntryAssembly().GetTypes().Union(Assembly.GetExecutingAssembly().GetTypes())
                                where typeof(IReplCommand).IsAssignableFrom(type) && type.IsInterface == false && type.IsAbstract == false
                                select type;
 
@@ -54,8 +55,10 @@ namespace Replify
 
             foreach (IReplCommand service in commands)
             {
-                engine.AddHostObject(service.Name, service);
+                engine.AddHostObject(service.Name, service);            
             }
+
+            engine.AddHostObject("Script", new ScriptCommand(this));
 
             this.engine = engine;
         }

@@ -66,3 +66,12 @@ completed in 0ms
 completed in 41ms
 >
 ```
+
+## Ninject
+The recommended method to support Ninject commands is to provide a ThingFactory implementation which delegates to Ninject.
+
+## External script files
+Manages scripts deployed to /Scripts
+*Script.List()*: List all available scripts
+*Script.Execute(index)*: Execute script by index
+*Script.Execute(filename)*: Execute script by filename
