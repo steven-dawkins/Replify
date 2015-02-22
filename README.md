@@ -34,6 +34,26 @@ public class GenerateCommand : IReplCommand
 }
 ```
 
+## Example REPL host object
+```c#
+// Alternatively REPL objects can be manually registered
+public class GenerateCommand
+{
+    // All public methods will be callable and identified in the command help
+    public double[] Floats(int count)
+    {            
+        var rand = new Random();
+
+        var results = from i in Enumerable.Range(0, count)
+                      select rand.NextDouble();
+        
+        return results.ToArray();
+    }
+}
+
+repl.AddHostObject("Generate2", new GenerateCommand());
+```
+
 ## REPL commands
 - Help - List available commands
 - (Command) - Display command help

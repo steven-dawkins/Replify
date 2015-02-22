@@ -33,6 +33,7 @@ namespace Replify
 
         private readonly IEnumerable<IReplCommand> commands;
         private readonly V8ScriptEngine engine;
+        private readonly Dictionary<Object, NamedObject> hostObjects;        
 
         public ClearScriptRepl()
             : this(new DefaultConstructorThingFactory())
@@ -42,6 +43,8 @@ namespace Replify
 
         public ClearScriptRepl(IThingFactory factory)
         {
+            this.hostObjects = new Dictionary<object, NamedObject>();
+
             var commandTypes = from type in Assembly.GetEntryAssembly().GetTypes().Union(Assembly.GetExecutingAssembly().GetTypes())
                                where typeof(IReplCommand).IsAssignableFrom(type) && type.IsInterface == false && type.IsAbstract == false
                                select type;
@@ -51,21 +54,33 @@ namespace Replify
 
             var runtime = new V8Runtime();
 
-            var engine = runtime.CreateScriptEngine();
+            this.engine = runtime.CreateScriptEngine();
 
             foreach (IReplCommand service in commands)
-            {
-                engine.AddHostObject(service.Name, service);            
+            {                
+                this.AddHostObject(service.Name, service);            
             }
 
-            engine.AddHostObject("Script", new ScriptCommand(this));
+            var scriptCommand = new ScriptCommand(this);
+            this.AddHostObject("Script", scriptCommand);            
+        }
 
-            this.engine = engine;
+        public class NamedObject
+        {
+            public readonly string Name;
+            public readonly object Object;
+
+            public NamedObject(string name, object obj)
+            {
+                this.Name = name;
+                this.Object = obj;
+            }
         }
 
         public void AddHostObject(string name, object obj)
         {
             this.engine.AddHostObject(name, obj);
+            this.hostObjects.Add(obj, new NamedObject(name, obj));
         }
 
         public void AddHostType(string name, Type type)
@@ -98,14 +113,18 @@ namespace Replify
                 {
                     case "help":
                         Console.WriteLine("Available commands:\n");
+
+                        var commandNames = commands.Select(command => command.Name).Union(hostObjects.Values.Select(obj => obj.Name)).OrderBy(command => command);
+
+                        foreach (string commandName in commandNames)
+                        {
+                            Console.WriteLine(commandName);
+                        }
+
                         Console.WriteLine("help");
                         Console.WriteLine("history");
                         Console.WriteLine("clearHistory");
                         Console.WriteLine("quit | exit");
-                        foreach (IReplCommand command in commands)
-                        {
-                            Console.WriteLine(command.Name);
-                        }
                         break;
                     case "history":
                         Console.WriteLine(File.ReadAllText(HistoryFile));
@@ -126,6 +145,10 @@ namespace Replify
                         {
                             Console.WriteLine(((IReplCommand)result).Help());
                         }
+                        else if (hostObjects.ContainsKey(result))
+                        {
+                            Console.WriteLine(HelpManager.GetHelpInfo(result));                                                        
+                        }
                         else if (result is VoidResult || result is Undefined)
                         {
                         }                     
@@ -143,7 +166,6 @@ namespace Replify
                             Console.WriteLine(json);
                         }
                         Console.WriteLine("completed in {0}ms", timer.ElapsedMilliseconds);
-
 
                         break;
                 }

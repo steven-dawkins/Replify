@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Replify.CommandLine.Commands;
+using System;
 using System.IO;
 
 namespace Replify.CommandLine
@@ -15,6 +16,8 @@ namespace Replify.CommandLine
 
             // import System.Console so we can write stuff to the console
             repl.AddHostType("Console", typeof(Console));
+
+            repl.AddHostObject("Generate2", new GenerateCommand());
 
             // import any javascript script files included in the program args
             if (args.Length >= 1)
