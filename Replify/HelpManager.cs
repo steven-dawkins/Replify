@@ -29,6 +29,7 @@ namespace Replify
                         result.AppendFormat("{0}({1})\n", info.Name, String.Join(", ", parameters));
                     }
                 }
+                result.AppendFormat("\n");
             }
 
             if (type.GetProperties().Any())
@@ -38,6 +39,7 @@ namespace Replify
                 {                                            
                     result.AppendFormat("{0}\n", info.Name);                    
                 }
+                result.AppendFormat("\n");
             }
 
             if (type.GetFields().Any())
@@ -47,6 +49,7 @@ namespace Replify
                 {
                     result.AppendFormat("{0}\n", info.Name);
                 }
+                result.AppendFormat("\n");
             }                       
 
             return result.ToString();

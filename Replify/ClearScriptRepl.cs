@@ -121,6 +121,7 @@ namespace Replify
                             Console.WriteLine(commandName);
                         }
 
+                        Console.WriteLine();
                         Console.WriteLine("help");
                         Console.WriteLine("history");
                         Console.WriteLine("clearHistory");
@@ -165,7 +166,14 @@ namespace Replify
                             var json = JsonConvert.SerializeObject(result, Formatting.Indented, settings);
                             Console.WriteLine(json);
                         }
-                        Console.WriteLine("completed in {0}ms", timer.ElapsedMilliseconds);
+
+                        if (timer.ElapsedMilliseconds > 10000)
+                        {
+                            Console.WriteLine("completed in {0}ms", timer.ElapsedMilliseconds);
+                        }
+                        {
+                            Console.WriteLine("completed in {0:0.0}s", timer.ElapsedMilliseconds / 1000.0);
+                        }
 
                         break;
                 }
