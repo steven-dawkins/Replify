@@ -45,7 +45,14 @@ namespace Replify
         {
             this.hostObjects = new Dictionary<object, NamedObject>();
 
-            var commandTypes = from type in Assembly.GetEntryAssembly().GetTypes().Union(Assembly.GetExecutingAssembly().GetTypes())
+            IEnumerable<Type> types = Assembly.GetExecutingAssembly().GetTypes();
+
+            if (Assembly.GetEntryAssembly() != null)
+            {
+                types = types.Union(Assembly.GetEntryAssembly().GetTypes());
+            }
+
+            var commandTypes = from type in types
                                where typeof(IReplCommand).IsAssignableFrom(type) && type.IsInterface == false && type.IsAbstract == false
                                select type;
 
