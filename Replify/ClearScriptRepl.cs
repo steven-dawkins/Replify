@@ -167,10 +167,11 @@ namespace Replify
                             Console.WriteLine(json);
                         }
 
-                        if (timer.ElapsedMilliseconds > 10000)
+                        if (timer.ElapsedMilliseconds < 10000)
                         {
                             Console.WriteLine("completed in {0}ms", timer.ElapsedMilliseconds);
                         }
+                        else
                         {
                             Console.WriteLine("completed in {0:0.0}s", timer.ElapsedMilliseconds / 1000.0);
                         }
