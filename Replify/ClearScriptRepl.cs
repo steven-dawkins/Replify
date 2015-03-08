@@ -146,6 +146,12 @@ namespace Replify
                     default:
                         var timer = new Stopwatch();
                         timer.Start();
+
+                        // ignore trailing .
+                        if (line.EndsWith("."))
+                        {
+                            line = line.Substring(0, line.Length - 1);
+                        }
                         var result = engine.Evaluate(line);
                         timer.Stop();
 
