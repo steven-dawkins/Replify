@@ -1,5 +1,6 @@
 # Replify
-Add a javascript REPL to your library
+Add a javascript REPL to your c# library
+[![Build status](https://ci.appveyor.com/api/projects/status/ofmp8835nj6lnhhn?svg=true)](https://ci.appveyor.com/project/steven-dawkins/replify)
 
 ## Example REPL console application
 ```c#
