@@ -90,6 +90,24 @@ completed in 41ms
 
 ## Ninject
 The recommended method to support Ninject commands is to provide a ThingFactory implementation which delegates to Ninject.
+```c#
+public class NinjectThingFactory : IThingFactory
+{
+    private readonly StandardKernel kernel;
+
+    public NinjectThingFactory(StandardKernel kernel)
+    {
+        this.kernel = kernel;
+    }
+
+    public object Create(Type type)
+    {
+        return this.kernel.Get(type);
+    }
+}
+    
+var repl = new ClearScriptRepl(new NinjectThingFactory(kernel));
+```
 
 ## External script files
 Manages scripts deployed to /Scripts
