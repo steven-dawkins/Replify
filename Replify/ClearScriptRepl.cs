@@ -95,8 +95,21 @@ namespace Replify
             this.engine.AddHostType(name, type);
         }
 
-        public void StartReplLoop()
-        {                                    
+        public void StartReplLoop(params string[] args)
+        {
+            // import any javascript script files included in the program args
+            if (args.Length >= 1)
+            {
+                if (File.Exists(args[0]))
+                {
+                    Execute(File.ReadAllText(args[0]));
+                }
+                else
+                {
+                    Console.WriteLine("Unable to launch script: {0}, not found", args[0]);
+                }
+            }      
+
             Console.Write("> ");
             string line;
             while ((line = Console.ReadLine()) != null)

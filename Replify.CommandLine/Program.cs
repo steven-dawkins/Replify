@@ -17,23 +17,10 @@ namespace Replify.CommandLine
             // import System.Console so we can write stuff to the console
             repl.AddHostType("Console", typeof(Console));
 
-            repl.AddHostObject("Generate2", new GenerateCommand());
-
-            // import any javascript script files included in the program args
-            if (args.Length >= 1)
-            {
-                if (File.Exists(args[0]))
-                {
-                    repl.Execute(File.ReadAllText(args[0]));
-                }
-                else
-                {
-                    Console.WriteLine("Unable to launch script: {0}, not found", args[0]);
-                }
-            }            
+            repl.AddHostObject("Generate2", new GenerateCommand());                  
 
             // start the REPL loop, this will exit gracefully when the user quits
-            repl.StartReplLoop();
+            repl.StartReplLoop(args);
         }
     }
 }
