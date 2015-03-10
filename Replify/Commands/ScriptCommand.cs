@@ -27,7 +27,7 @@ namespace ContinuousDataIntegrityChecking.Commands
             int i = 0;
             foreach (var scriptFile in GetScriptFiles())
             {
-                Console.WriteLine("{0} - {1}", i++, scriptFile);
+                repl.Output.WriteLine("{0} - {1}", i++, scriptFile);
             }
         }
 
@@ -42,7 +42,7 @@ namespace ContinuousDataIntegrityChecking.Commands
         {
             if (!File.Exists(filename))
             {
-                Console.WriteLine("Unable to load script file: {0}", filename);
+                repl.Output.WriteLine("Unable to load script file: {0}", filename);
             }
 
             try
@@ -51,7 +51,7 @@ namespace ContinuousDataIntegrityChecking.Commands
             }            
             catch(Exception e)
             {
-                Console.WriteLine("Error running script: {0}", e.Message);
+                repl.Output.WriteLine("Error running script: {0}", e.Message);
             }
         }
     }

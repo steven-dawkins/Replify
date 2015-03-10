@@ -33,16 +33,30 @@ namespace Replify
 
         private readonly IEnumerable<IReplCommand> commands;
         private readonly V8ScriptEngine engine;
-        private readonly Dictionary<Object, NamedObject> hostObjects;        
+        private readonly Dictionary<Object, NamedObject> hostObjects;
+
+        public readonly TextWriter Output;        
 
         public ClearScriptRepl()
-            : this(new DefaultConstructorThingFactory())
+            : this(new DefaultConstructorThingFactory(), Console.Out)
         {
 
         }
 
         public ClearScriptRepl(IThingFactory factory)
+            : this(factory, Console.Out)
         {
+        }
+
+        public ClearScriptRepl(TextWriter output)
+            : this(new DefaultConstructorThingFactory(), output)
+        {
+
+        }
+
+        public ClearScriptRepl(IThingFactory factory, TextWriter output)
+        {
+            this.Output = output;
             this.hostObjects = new Dictionary<object, NamedObject>();
 
             IEnumerable<Type> types = Assembly.GetExecutingAssembly().GetTypes();
@@ -106,7 +120,7 @@ namespace Replify
                 }
                 else
                 {
-                    Console.WriteLine("Unable to launch script: {0}, not found", args[0]);
+                    Output.WriteLine("Unable to launch script: {0}, not found", args[0]);
                 }
             }      
 
@@ -121,7 +135,7 @@ namespace Replify
                     return;
                 }
 
-                Console.Write("> ");
+                Output.Write("> ");
             }
         }
 
@@ -132,23 +146,23 @@ namespace Replify
                 switch (line)
                 {
                     case "help":
-                        Console.WriteLine("Available commands:\n");
+                        Output.WriteLine("Available commands:\n");
 
                         var commandNames = commands.Select(command => command.Name).Union(hostObjects.Values.Select(obj => obj.Name)).OrderBy(command => command);
 
                         foreach (string commandName in commandNames)
                         {
-                            Console.WriteLine(commandName);
+                            Output.WriteLine(commandName);
                         }
 
-                        Console.WriteLine();
-                        Console.WriteLine("help");
-                        Console.WriteLine("history");
-                        Console.WriteLine("clearHistory");
-                        Console.WriteLine("quit | exit");
+                        Output.WriteLine();
+                        Output.WriteLine("help");
+                        Output.WriteLine("history");
+                        Output.WriteLine("clearHistory");
+                        Output.WriteLine("quit | exit");
                         break;
                     case "history":
-                        Console.WriteLine(File.ReadAllText(HistoryFile));
+                        Output.WriteLine(File.ReadAllText(HistoryFile));
                         break;
                     case "clearHistory":
                         File.Delete(HistoryFile);
@@ -170,18 +184,18 @@ namespace Replify
 
                         if (result is IReplCommand)
                         {
-                            Console.WriteLine(((IReplCommand)result).Help());
+                            Output.WriteLine(((IReplCommand)result).Help());
                         }
                         else if (hostObjects.ContainsKey(result))
                         {
-                            Console.WriteLine(HelpManager.GetHelpInfo(result));                                                        
+                            Output.WriteLine(HelpManager.GetHelpInfo(result));                                                        
                         }
                         else if (result is VoidResult || result is Undefined)
                         {
                         }                     
                         else if (result is string)
                         {
-                            Console.WriteLine(result);
+                            Output.WriteLine(result);
                         }
                         else
                         {
@@ -190,16 +204,16 @@ namespace Replify
                             settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
 
                             var json = JsonConvert.SerializeObject(result, Formatting.Indented, settings);
-                            Console.WriteLine(json);
+                            Output.WriteLine(json);
                         }
 
                         if (timer.ElapsedMilliseconds < 10000)
                         {
-                            Console.WriteLine("completed in {0}ms", timer.ElapsedMilliseconds);
+                            Output.WriteLine("completed in {0}ms", timer.ElapsedMilliseconds);
                         }
                         else
                         {
-                            Console.WriteLine("completed in {0:0.0}s", timer.ElapsedMilliseconds / 1000.0);
+                            Output.WriteLine("completed in {0:0.0}s", timer.ElapsedMilliseconds / 1000.0);
                         }
 
                         break;
@@ -209,8 +223,8 @@ namespace Replify
             {
                 while (ex != null)
                 {
-                    Console.WriteLine(ex.Message);
-                    Console.WriteLine(ex.StackTrace);
+                    Output.WriteLine(ex.Message);
+                    Output.WriteLine(ex.StackTrace);
                     ex = ex.InnerException;
                 }
             }
