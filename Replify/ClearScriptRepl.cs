@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Replify
 {
@@ -199,12 +200,14 @@ namespace Replify
                         }
                         else
                         {
-                            var settings = new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Include };
-
-                            settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-
-                            var json = JsonConvert.SerializeObject(result, Formatting.Indented, settings);
-                            Output.WriteLine(json);
+                            if (result.GetType().GetGenericTypeDefinition() == typeof(Task<>))
+                            {
+                                NewMethodAsync((dynamic)result);
+                            }
+                            else
+                            {
+                                NewMethod(result);
+                            }
                         }
 
                         if (timer.ElapsedMilliseconds < 10000)
@@ -229,6 +232,21 @@ namespace Replify
                 }
             }
             return true;
-        }        
+        }
+
+        private void NewMethodAsync<T>(Task<T> task)
+        {
+            NewMethod(task.Result);
+        }
+
+        private void NewMethod(object result)
+        {
+            var settings = new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Include };
+
+            settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+
+            var json = JsonConvert.SerializeObject(result, Formatting.Indented, settings);
+            Output.WriteLine(json);
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Replify.CommandLine.Commands
 {
@@ -15,6 +16,16 @@ namespace Replify.CommandLine.Commands
                           select rand.NextDouble();
             
             return results.ToArray();
+        }
+
+        public Task<double[]> FloatsAsync(int count)
+        {
+            var rand = new Random();
+
+            var results = from i in Enumerable.Range(0, count)
+                          select rand.NextDouble();
+
+            return Task.FromResult(results.ToArray());
         }
 
         public enum TestEnum { Yes, No }
