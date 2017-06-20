@@ -1,10 +1,14 @@
 version: 1.0.{build}
 nuget:
   project_feed: true
-install:
-  choco install nuget.commandline
+#install:
+#  choco install nuget.commandline
 before_build:
   - nuget restore
+assembly_info:
+  patch: true
+  file: AssemblyInfo.cs
+  assembly_version: "{version}"
 build:
   publish_nuget: true
   publish_nuget_symbols: true
