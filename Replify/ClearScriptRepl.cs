@@ -110,6 +110,11 @@ namespace Replify
             this.engine.AddHostType(name, type);
         }
 
+        public void AddHostType<T>()
+        {
+            this.engine.AddHostType(nameof(T), typeof(T));
+        }
+
         public void StartReplLoop(params string[] args)
         {
             // import any javascript script files included in the program args
