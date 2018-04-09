@@ -205,7 +205,7 @@ namespace Replify
                         }
                         else
                         {
-                            if (result.GetType().GetGenericTypeDefinition() == typeof(Task<>))
+                            if (result.GetType().IsGenericType && result.GetType().GetGenericTypeDefinition() == typeof(Task<>))
                             {
                                 NewMethodAsync((dynamic)result);
                             }

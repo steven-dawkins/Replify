@@ -22,5 +22,17 @@ namespace Replify.Tests
 
             Approvals.Verify(output);            
         }
+
+        [TestMethod]
+        public void TestAssignment()
+        {
+            var output = new StringBuilder();
+            var writer = new StringWriter(output);
+            var repl = new ClearScriptRepl(writer);
+
+            repl.Execute("var x; x = { y: 5 };");
+
+            Approvals.Verify(output);
+        }
     }
 }
